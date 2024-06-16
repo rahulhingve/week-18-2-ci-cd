@@ -28,3 +28,16 @@ jobs:
 
     - name: Verify Pushed Image
       run: docker pull rahulhingve1/mynextapp:latest  
+
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker pull rahulhingve1/mynextapp:latest
+          sudo docker stop web-app || true
+          sudo docker rm web-app || true
+          sudo docker run -d --name web-app -p 3005:3000 rahulhingve1/mynextapp:latest  
